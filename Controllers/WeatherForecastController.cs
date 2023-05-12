@@ -1,3 +1,4 @@
+using InmobiliariaAPI.Modeles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InmobiliariaAPI.Controllers;
