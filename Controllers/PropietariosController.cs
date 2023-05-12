@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaAPI.Controllers;
 
@@ -30,15 +31,15 @@ public class PropietariosController : ControllerBase
 		hashSalt = _config["Salt"] ?? "";
 	}
 
-	// GET: Propietarios/
-	[HttpGet()] // devuelve todos los propietarios
+	// GET: Propietarios/ (todos los propietarios)
+	[HttpGet()]
 	public IEnumerable<Propietario> Get()
 	{
 		return _context.Propietarios;
 	}
 
-	// GET: Propietarios/:id
-	[HttpGet("{id}")] // devuelve un propietario
+	// GET: Propietarios/:id (un propietario solo)
+	[HttpGet("{id}")]
 	public IActionResult Get(int id)
 	{
 		var propietario = _context.Propietarios.Find(id);
@@ -47,35 +48,35 @@ public class PropietariosController : ControllerBase
 	}
 
 	// PUT: Propietarios/HashPasswords
-	[HttpPut("HashPasswords")]
-	public IActionResult HashPasswords()
-	{
-		// Obtener todos los propietarios
-		var propietarios = _context.Propietarios.ToList();
+	// [HttpPut("HashPasswords")]
+	// public IActionResult HashPasswords()
+	// {
+	// 	// Obtener todos los propietarios
+	// 	var propietarios = _context.Propietarios.ToList();
 
-		// Hashear el DNI y actualizarlo como contraseña
-		foreach (var propietario in propietarios)
-		{
-			string hashedDni = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-				password: propietario.Dni,
-				salt: System.Text.Encoding.ASCII.GetBytes(hashSalt),
-				prf: KeyDerivationPrf.HMACSHA1,
-				iterationCount: 10000,
-				numBytesRequested: 256 / 8
-			));
+	// 	// Hashear el DNI y actualizarlo como contraseña
+	// 	foreach (var propietario in propietarios)
+	// 	{
+	// 		string hashedDni = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+	// 			password: propietario.Dni,
+	// 			salt: System.Text.Encoding.ASCII.GetBytes(hashSalt),
+	// 			prf: KeyDerivationPrf.HMACSHA1,
+	// 			iterationCount: 10000,
+	// 			numBytesRequested: 256 / 8
+	// 		));
 
-			// Actualizar contraseña
-			propietario.Password = hashedDni;
+	// 		// Actualizar contraseña
+	// 		propietario.Password = hashedDni;
 
-			// Update the Propietario object in the database
-			_context.Entry(propietario).State = EntityState.Modified;
-		}
+	// 		// Update the Propietario object in the database
+	// 		_context.Entry(propietario).State = EntityState.Modified;
+	// 	}
 
-		// Guardar los cambios
-		_context.SaveChanges();
+	// 	// Guardar los cambios
+	// 	_context.SaveChanges();
 
-		return Ok();
-	}
+	// 	return Ok();
+	// }
 
 	// POST: Propietarios/Login
 	[HttpPost("Login")]
@@ -114,4 +115,26 @@ public class PropietariosController : ControllerBase
 
 		return Ok(new JwtSecurityTokenHandler().WriteToken(token));
 	}
+
+	// GET: Popietarios/Perfil
+	[HttpGet("Perfil")]
+	[Authorize]
+	public IActionResult Perfil()
+	{
+		var propietario = User.Identity != null
+			? _context.Propietarios
+				.Where(x => x.Correo == User.Identity.Name)
+				.Select(x => new PropietarioView(x))
+				.FirstOrDefault()
+			: null;
+
+		if (propietario == null)
+		{
+			return NotFound();
+		}
+
+		return Ok(propietario);
+	}
+
 }
+

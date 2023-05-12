@@ -7,4 +7,6 @@ public class DataContext : DbContext
 	public DataContext(DbContextOptions<DataContext> options) : base(options) {}
 
 	public DbSet<Propietario> Propietarios { get; set; } = null!;
+	// public DbSet<Propietario> PropietariosView { get; set; } = null!;
+
 }
