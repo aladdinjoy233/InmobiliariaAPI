@@ -142,38 +142,43 @@ public class PropietariosController : ControllerBase
 	[Authorize]
 	public IActionResult Edit(EditView propietario)
 	{
-		// var propietarioDb = User.Identity != null
-		// 	? _context.Propietarios.Find(Int32.Parse((User.Claims.FirstOrDefault(c => c.Type == "Id").Value)))
-		// 	: null;
-		var propietarioDb = User.Identity != null
-			? _context.Propietarios.Find(User.FindFirstValue("Id"))
-			: null;
-
-		if (propietarioDb == null) return NotFound();
-
-		if (propietario.Id_Propietario != propietarioDb.Id_Propietario) return BadRequest();
-
-		if (
-			string.IsNullOrEmpty(propietario.Dni) ||
-			string.IsNullOrEmpty(propietario.Nombre) ||
-			string.IsNullOrEmpty(propietario.Apellido) ||
-			string.IsNullOrEmpty(propietario.Correo) ||
-			string.IsNullOrEmpty(propietario.Telefono)
-		)
+		try
 		{
-			return BadRequest("Nungun campo puede ser vacio");
+			int.TryParse(User.FindFirstValue("Id"), out int userId);
+			var propietarioDb = User.Identity != null
+				? _context.Propietarios.Find(userId)
+				: null;
+
+			if (propietarioDb == null) return NotFound();
+
+			if (propietario.Id_Propietario != propietarioDb.Id_Propietario) return BadRequest();
+
+			if (
+				string.IsNullOrEmpty(propietario.Dni) ||
+				string.IsNullOrEmpty(propietario.Nombre) ||
+				string.IsNullOrEmpty(propietario.Apellido) ||
+				string.IsNullOrEmpty(propietario.Correo) ||
+				string.IsNullOrEmpty(propietario.Telefono)
+			)
+			{
+				return BadRequest("Nungun campo puede ser vacio");
+			}
+
+			propietarioDb.Dni = propietario.Dni;
+			propietarioDb.Nombre = propietario.Nombre;
+			propietarioDb.Apellido = propietario.Apellido;
+			propietarioDb.Correo = propietario.Correo;
+			propietarioDb.Telefono = propietario.Telefono;
+
+			_context.Propietarios.Update(propietarioDb);
+			_context.SaveChanges();
+
+			return Ok(propietario);
 		}
-
-		propietarioDb.Dni = propietario.Dni;
-		propietarioDb.Nombre = propietario.Nombre;
-		propietarioDb.Apellido = propietario.Apellido;
-		propietarioDb.Correo = propietario.Correo;
-		propietarioDb.Telefono = propietario.Telefono;
-
-		_context.Propietarios.Update(propietarioDb);
-		_context.SaveChanges();
-
-		return Ok(propietario);
+		catch (Exception e)
+		{
+			return BadRequest(e.Message);
+		}
 	}
 
 

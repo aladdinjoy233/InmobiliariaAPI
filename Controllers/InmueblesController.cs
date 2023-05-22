@@ -34,8 +34,9 @@ public class InmueblesController : ControllerBase
 	{
 		try
 		{
+			int.TryParse(User.FindFirstValue("Id"), out int userId);
 			var usuario = User.Identity != null
-				? _context.Propietarios.Find(Int32.Parse(User.FindFirstValue("Id")))
+				? _context.Propietarios.Find(userId)
 				: null;
 
 			if (usuario == null) return NotFound();
@@ -55,8 +56,9 @@ public class InmueblesController : ControllerBase
 	{
 		try
 		{
+			int.TryParse(User.FindFirstValue("Id"), out int userId);
 			var usuario = User.Identity != null
-				? _context.Propietarios.Find(Int32.Parse(User.FindFirstValue("Id")))
+				? _context.Propietarios.Find(userId)
 				: null;
 
 			if (usuario == null) return NotFound();
