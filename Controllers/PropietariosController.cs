@@ -80,7 +80,8 @@ public class PropietariosController : ControllerBase
 
 	// POST: Propietarios/Login
 	[HttpPost("Login")]
-	public IActionResult Login([FromForm] LoginView loginView)
+	// public IActionResult Login([FromForm] LoginView loginView)
+	public IActionResult Login(LoginView loginView)
 	{
 		var propietario = _context.Propietarios.FirstOrDefault(x => x.Correo == loginView.Correo);
 
@@ -135,6 +136,44 @@ public class PropietariosController : ControllerBase
 
 		return Ok(propietario);
 	}
+
+	// POST: Propietarios/Edit
+	[HttpPost("Edit")]
+	[Authorize]
+	public IActionResult Edit(EditView propietario)
+	{
+		var propietarioDb = User.Identity != null
+			? _context.Propietarios.Find(Int32.Parse((User.Claims.FirstOrDefault(c => c.Type == "Id").Value)))
+			: null;
+
+		if (propietarioDb == null) return NotFound();
+
+		if (propietario.Id_Propietario != propietarioDb.Id_Propietario) return BadRequest();
+
+		if (
+			string.IsNullOrEmpty(propietario.Dni) ||
+			string.IsNullOrEmpty(propietario.Nombre) ||
+			string.IsNullOrEmpty(propietario.Apellido) ||
+			string.IsNullOrEmpty(propietario.Correo) ||
+			string.IsNullOrEmpty(propietario.Telefono)
+		)
+		{
+			return BadRequest("Nungun campo puede ser vacio");
+		}
+
+		propietarioDb.Dni = propietario.Dni;
+		propietarioDb.Nombre = propietario.Nombre;
+		propietarioDb.Apellido = propietario.Apellido;
+		propietarioDb.Correo = propietario.Correo;
+		propietarioDb.Telefono = propietario.Telefono;
+
+		_context.Propietarios.Update(propietarioDb);
+		_context.SaveChanges();
+
+		return Ok(propietario);
+	}
+
+
 
 }
 
