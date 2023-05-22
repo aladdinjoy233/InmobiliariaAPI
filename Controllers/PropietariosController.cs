@@ -142,8 +142,11 @@ public class PropietariosController : ControllerBase
 	[Authorize]
 	public IActionResult Edit(EditView propietario)
 	{
+		// var propietarioDb = User.Identity != null
+		// 	? _context.Propietarios.Find(Int32.Parse((User.Claims.FirstOrDefault(c => c.Type == "Id").Value)))
+		// 	: null;
 		var propietarioDb = User.Identity != null
-			? _context.Propietarios.Find(Int32.Parse((User.Claims.FirstOrDefault(c => c.Type == "Id").Value)))
+			? _context.Propietarios.Find(User.FindFirstValue("Id"))
 			: null;
 
 		if (propietarioDb == null) return NotFound();
