@@ -45,7 +45,7 @@ public class Inmueble
 	public decimal ? Longitud { get; set; }
 	public decimal ? Precio { get; set; }
 	public bool Activo { get; set; }
-	public String Imagen { get; set; } = "";
+	public String ? Imagen { get; set; }
 
 	public string UsoNombre => Uso > 0 ? ((enUsos)Uso).ToString() : "";
 	public string TipoNombre => Tipo !> 0 ? ((enTipos)Tipo).ToString() : "";
