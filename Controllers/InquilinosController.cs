@@ -18,15 +18,8 @@ public class InquilinosController : ControllerBase
 		_config = config;
 	}
 
-	// GET: Inquilinos/
-	[HttpGet]
-	public IEnumerable<Inquilino> Get()
-	{
-		return _context.Inquilinos;
-	}
-
-	// POST: Inquilinos/Obtener/{inmueble_id}
-	[HttpPost("Obtener/{inmueble_id}")]
+	// GET: Inquilinos/Obtener/{inmueble_id}
+	[HttpGet("Obtener/{inmueble_id}")]
 	[Authorize]
 	public IActionResult ObtenerPorInmueble(int inmueble_id)
 	{

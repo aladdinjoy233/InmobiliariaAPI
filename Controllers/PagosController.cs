@@ -18,15 +18,8 @@ public class PagosController : ControllerBase
 		_config = config;
 	}
 
-	// GET: Pagos/
-	[HttpGet]
-	public IEnumerable<Pago> Get()
-	{
-		return _context.Pagos;
-	}
-
-	// POST: Pagos/Obtener/{contrato_id}
-	[HttpPost("Obtener/{contrato_id}")]
+	// GET: Pagos/Obtener/{contrato_id}
+	[HttpGet("Obtener/{contrato_id}")]
 	[Authorize]
 	public IActionResult obtenerPorContrato(int contrato_id)
 	{

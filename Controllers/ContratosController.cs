@@ -18,15 +18,8 @@ public class ContratosController : ControllerBase
 		_config = config;
 	}
 
-	// GET: Contratos/
-	[HttpGet]
-	public IEnumerable<Contrato> Get()
-	{
-		return _context.Contratos;
-	}
-
-	// POST: Contratos/Obtener/{inmueble_id}
-	[HttpPost("Obtener/{inmueble_id}")]
+	// GET: Contratos/Obtener/{inmueble_id}
+	[HttpGet("Obtener/{inmueble_id}")]
 	[Authorize]
 	public IActionResult ObtenerPorInmueble(int inmueble_id)
 	{

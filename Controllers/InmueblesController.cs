@@ -19,15 +19,7 @@ public class InmueblesController : ControllerBase
 	}
 
 	// GET: Inmuebles/
-	[HttpGet()]
-	public IEnumerable<Inmueble> Get()
-	{
-		return _context.Inmuebles;
-		// return _context.Inmuebles.Include(i => i.Propietario); // Para obtener info del propietario con el inmueble
-	}
-
-	// POST: Inmuebles/
-	[HttpPost]
+	[HttpGet]
 	[Authorize]
 	public IActionResult GetInmuebles()
 	{
@@ -79,8 +71,8 @@ public class InmueblesController : ControllerBase
 		}
 	}
 
-	// POST: Inmuebles/Alquilados
-	[HttpPost("Alquilados")]
+	// GET: Inmuebles/Alquilados
+	[HttpGet("Alquilados")]
 	[Authorize]
 	public IActionResult GetAlquilados()
 	{
